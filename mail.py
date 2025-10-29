@@ -1,5 +1,4 @@
 import sys
-
 import os
 import smtplib
 import imghdr
@@ -11,18 +10,23 @@ EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
 
-
-
 parser = argparse.ArgumentParser(description="Send HTML cover letter email")
 parser.add_argument("--to", default="himanshu17113@gmail.com", help="Recipient email")
 parser.add_argument("--company", default="Your Company", help="Company name to inject")
 parser.add_argument("--hiring_team", default="Hiring Team", help="Hiring team name to inject")
-parser.add_argument("--value", default="App Development", help="Value to inject")
+
+# <-- MODIFIED SECTION START -->
+
+# REMOVED this line:
+# parser.add_argument("--value", default="App Development", help="Value to inject")
+
+# ADDED this line:
+parser.add_argument("--hook", default="I've been impressed by your innovative approach to mobile development.", help="The full personalized sentence for the company.")
 
 args = parser.parse_args()
 
 msg = EmailMessage()
-msg['Subject'] = f"Application for {args.position} Position"
+msg['Subject'] = f"Application for Flutter Developer Position"
 msg['From'] = EMAIL_ADDRESS
 msg['To'] = args.to
 
@@ -36,12 +40,14 @@ with open(html_path, 'r', encoding='utf-8') as f:
 # Simple placeholder replacements (matches tokens in your mail.html)
 replacements = {
     "{{Company Name}}": args.company,
-  "{{Hiring Team}}": args.hiring_team,
-  "{{Mention a specific app, feature, or company value}}": args.value
+    "{{Hiring Team}}": args.hiring_team,
+    "{{PersonalizedHook}}": args.hook  # <-- UPDATED this line
 }
+# <-- MODIFIED SECTION END -->
 
 for key, val in replacements.items():
     html_content = html_content.replace(key, val)
+
 # Insert current date into template (e.g. replaces {{Date}})
 date_str = datetime.date.today().strftime("%d %B %Y")
 html_content = html_content.replace("{{Date}}", date_str)
